@@ -17,13 +17,19 @@
 #
 # Adapted from web_app in apache2 recipe
 
-define :lighttpd_vhost, :template => "lighttpd_vhost.conf.erb" do
-	vhost_name = params[:server_name]
+define :lighttpd_vhost, :template => "lighttpd_vhost.conf.erb", :enable => true, :dir_listing => false do
+  name = params[:name]
+	vhost_name = params[:server_name] || params[:name]
+	Chef::Log.warn("Name: #{vhost_name}")
 	enabled = params[:enable]
 	include_recipe "lighttpd"
 
-	template "#{node[:lighttpd][:dir]}/sites-available/#{vhost_name}.conf" do
+	template "#{node[:lighttpd][:dir]}/sites-available/#{name}.conf" do
 		source params[:template]
+		if params[:template] == "lighttpd_vhost.conf.erb"
+		  cookbook 'lighttpd'
+	  end
+
 		owner "root"
 		group "root"
 		mode 0644
@@ -34,13 +40,13 @@ define :lighttpd_vhost, :template => "lighttpd_vhost.conf.erb" do
 			:vhost_name => vhost_name,
 			:params => params
 		)
-		if File.exists?("#{node[:lighttpd][:dir]}/sites-enabled/#{vhost_name}.conf")
+		if File.exists?("#{node[:lighttpd][:dir]}/sites-enabled/#{name}.conf")
 			notifies :restart, resources(:service => "lighttpd"), :delayed
 		end
 	end
 
-	lighttpd_site "#{vhost_name}.conf" do
-		server_name vhost_name
+	lighttpd_site "#{name}.conf" do
+		server_name name
 		enable enabled
 	end
 

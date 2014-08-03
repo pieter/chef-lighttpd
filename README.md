@@ -4,13 +4,11 @@ Installs and configures the lighttpd webserver [`http://www.lighttpd.net`](http:
 
 Requirements
 ============
-Currently only tested and supported on Debian and Ubuntu.
+Currently only tested on Ubuntu.
 
 Attributes
 ==========
-See `attributes/default.rb` and [the lighttpd docs](http://redmine.lighttpd.net/projects/lighttpd/wiki) for the default values and their explanation. The defaults are pretty sane, but they can be tweaked as needed.
-
-Of particular interest are the `max_worker`, `max_fds`, and `max_connections` attributes for performance tuning. Read more at [`http://redmine.lighttpd.net/projects/lighttpd/wiki/Docs_ConfigurationOptions`](http://redmine.lighttpd.net/projects/lighttpd/wiki/Docs_ConfigurationOptions) for very detailed explanations of all of the options available.
+None. Uses default lighttpd config by Ubuntu. Provide your own config if you want to.
 
 Usage
 =====
@@ -18,36 +16,7 @@ Include `recipe[lighttpd]` in your runlist to install lighttpd. To configure and
 
 Usually, you will not need to call `lighttpd_site` directly - just pass in `enable` as a param when you call `lighttpd_vhost`, and that will call lighttpd_site for you. However, it's available if you need to call it directly.
 
-There are also recipes for installing different modules you might want. Just include the appropriate recipe in your run list to install them. Currently mod_access, mod_alias, mod_accesslog, mod_rewrite, mod_redirect, mod_status, mod_compress, and mod_expire are included by default.
-
-Available modules to install separately are:
-
-* mod_auth
-* mod_cgi
-* mod_cml
-* mod_evasive
-* mod_evhost
-* mod_expire
-* mod_fastcgi
-* mod_flv_streaming
-* mod_magnet
-* mod_mysql_vhost
-* mod_no_www
-* mod_proxy
-* mod_rddtool
-* mod_simple_vhost
-* mod_ssi
-* mod_ssl
-* mod_status
-* mod_trigger_b4_dl
-* mod_userdir
-* mod_usertrack
-* mod_webdav
-
-TODO
-====
-* Add RHEL/CentOS support
-* Add test-kitchen
+You can istall other modules with the lighttpd_module resource.
 
 CONTRIBUTING
 ============
@@ -60,8 +29,9 @@ very appreciated.
 LICENSE
 =======
 
-Author:: Jeremy Bingham (<jeremy@dailykos.com>)
-Copyright:: 2011-2013, Kos Media, LLC
+Original Author:: Jeremy Bingham (<jeremy@dailykos.com>)
+Change:: Pieter de Bie <pieter@frim.nl>
+Copyright:: 2011-2013, Kos Media, LLC & others
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

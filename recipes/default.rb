@@ -22,54 +22,5 @@ package "lighttpd" do
 end
 
 service "lighttpd" do
-  # need to support more platforms, someday, when I have the time
-case node[:platform]
-  when "debian","ubuntu"
-    service_name "lighttpd"
-    restart_command "/usr/sbin/invoke-rc.d lighttpd restart && sleep 1"
-    reload_command "/usr/sbin/invoke-rc.d lighttpd restart && sleep 1"
-  end
-  supports value_for_platform(
-    "debian" => { "4.0" => [ :restart, :reload ], "default" => [ :restart, :reload, :status ] },
-    "ubuntu" => { "default" => [ :restart, :reload, :status ] },
-    "default" => { "default" => [:restart, :reload ] }
-  )
-  action :enable
+  provider Chef::Provider::Service::Init
 end
-
-cookbook_file "/usr/share/lighttpd/include-sites-enabled.pl" do
-  source "include-sites-enabled.pl"
-  mode 0755
-  owner "root"
-  group "root"
-end
-
-# make sites-available and sites-enabled
-directory "/etc/lighttpd/sites-available" do
-  action :create
-  mode 0755
-  owner "root"
-  group "root"
-end
-
-directory "/etc/lighttpd/sites-enabled" do
-  action :create
-  mode 0755
-  owner "root"
-  group "root"
-end
-
-template "/etc/lighttpd/lighttpd.conf" do
-  source "lighttpd.conf.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-  variables(
-    :extforward_headers => node[:lighttpd][:extforward_headers],
-    :extforward_forwarders => node[:lighttpd][:extforward_forwarders],
-    :url_rewrites => node[:lighttpd][:url_rewrites],
-    :url_redirects => node[:lighttpd][:url_redirects]
-  )
-  notifies :restart, resources(:service => "lighttpd"), :delayed
-end
-
